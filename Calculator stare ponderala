@@ -1,0 +1,160 @@
+using System.Reflection.Metadata.Ecma335;
+
+namespace CalculatorStarePonderala
+{
+    public partial class CalculatorStarePonderala : Form
+    {
+        public CalculatorStarePonderala()
+        {
+            InitializeComponent();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private double ValidareDateIntroduse()
+        {
+            double greutateIntrodusa = Convert.ToDouble(textBoxGreutateIntrodusa.Text);
+            double inaltimeIntrodusa = Convert.ToDouble(textBoxInaltimeIntrodusa.Text);
+            var mesajEroare = labelMesajEroare.Text;
+            float valoareIMC = (float)(greutateIntrodusa / (float)inaltimeIntrodusa * inaltimeIntrodusa);
+
+            try
+            {
+                if (greutateIntrodusa <= 0 || inaltimeIntrodusa <= 0)
+                {
+                    mesajEroare = "Date invalide. Greutatea si inaltimea nu pot avea valori negative sau mai mici decat 0.";
+                    return -1;
+                }
+            }
+            catch (FormatException)
+            {
+                mesajEroare = " Eroare necunoscuta. Nu introduceti litere sau simboluri.";
+                return -1;
+            }
+            return valoareIMC;
+        }
+
+        private double CalculIMC(double greutateIntrodusa, double inaltimeIntrodusa)
+        {
+            float rezultatIMC = (float)greutateIntrodusa / (float)(inaltimeIntrodusa * inaltimeIntrodusa);
+            return rezultatIMC;
+        }
+
+        private double CalculGreutateIdeala(double inaltimeIntrodusa)
+        {
+            float greutateIdeala = (float)((inaltimeIntrodusa - 100) - (inaltimeIntrodusa - 150)) / 4;
+            return greutateIdeala;
+        }
+
+        private double KgDiferenta(double greutateIntrodusa, double greutateIdeala)
+        {
+            if (greutateIdeala > greutateIntrodusa)
+            {
+                return (float)(greutateIdeala - greutateIntrodusa);
+            }
+            else
+            {
+                return (float)(greutateIntrodusa - greutateIdeala);
+            }
+        }
+
+        private void MesajStarePonderala()
+        {
+            try
+            {
+                double greutateIntrodusa = Convert.ToDouble(textBoxGreutateIntrodusa.Text);
+                double inaltimeIntrodusa = Convert.ToDouble(textBoxInaltimeIntrodusa.Text);
+
+                float greutateIdeala = (float)(inaltimeIntrodusa - 1.00) * 100;
+                //double rezultatIMC = ValidareDateIntroduse();
+                float rezultatIMC = (float)greutateIntrodusa / (float)(inaltimeIntrodusa * inaltimeIntrodusa);
+
+                if (rezultatIMC < 18.49)
+                {
+                    labelMesajIMC.Text = $"Sunteți subponderal. Greutatea dvs. ideală este de {greutateIdeala} kg";
+                    double kgDiferenta = greutateIdeala - greutateIntrodusa;
+                    labelKgDiferenta.Text = $" Pentru a atinge aceasta greutate este necesar sa adaugati" +
+                        $" {KgDiferenta(greutateIntrodusa, greutateIdeala)} kg";
+                }
+                else if (rezultatIMC >= 18.50 && rezultatIMC <= 24.99)
+                {
+                    labelMesajIMC.Text = "Aveți o greutate normală";
+                }
+                else if (rezultatIMC >= 25 && rezultatIMC <= 29.99)
+                {
+                    labelMesajIMC.Text = $"Prezentați o obezitate de gradul întâi. Greutatea dvs. ideală este de {greutateIdeala} kg";
+                    double kgDiferenta = greutateIntrodusa - greutateIdeala;
+                    labelKgDiferenta.Text = $" Pentru a atinge aceasta greutate este necesar sa pierdeti " +
+                        $"{KgDiferenta(greutateIntrodusa, greutateIdeala)} kg";
+
+                }
+                else if (rezultatIMC >= 30 && rezultatIMC <= 34.99)
+                {
+
+                    labelMesajIMC.Text = $"Prezentați o obezitate de gradul doi. Greutatea dvs. ideală este de {greutateIdeala} kg";
+                    double kgDiferenta = greutateIntrodusa - greutateIdeala;
+                    labelKgDiferenta.Text = $"Pentru a atinge aceasta greutate este necesar sa pierdeti" +
+                        $"{KgDiferenta(greutateIntrodusa, greutateIdeala)} kg";
+
+                }
+
+                else if (rezultatIMC >= 35 && rezultatIMC <= 39.99)
+                {
+                    labelMesajIMC.Text = $"Prezentați o obezitate de gradul trei. Greutatea dvs. ideală este de {greutateIdeala} kg";
+                    double kgDiferenta = greutateIntrodusa - greutateIdeala;
+                    labelKgDiferenta.Text = $"  Pentru a atinge aceasta greutate este necesar sa pierdeti" +
+                        $" {KgDiferenta(greutateIntrodusa, greutateIdeala)} kg";
+                }
+                else if (rezultatIMC >= 40)
+                {
+                    labelMesajIMC.Text = $"Prezentați o obezitate morbida. Greutatea dvs. ideală este de {greutateIdeala} kg";
+                    double kgDiferenta = greutateIntrodusa - greutateIdeala;
+                    labelKgDiferenta.Text = $" Pentru a atinge aceasta greutate este necesar sa pierdeti" +
+                        $" {KgDiferenta(greutateIntrodusa, greutateIdeala)} kg";
+                }
+
+            }
+            catch (Exception e)
+            {
+                labelMesajEroare.Text = $"Eroare necunoscută: {e.Message}";
+            }
+        }
+
+        private void buttonCalculeazaIMC_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                double greutateIntrodusa = Convert.ToDouble(textBoxGreutateIntrodusa.Text);
+                double inaltimeIntrodusa = Convert.ToDouble(textBoxInaltimeIntrodusa.Text);
+
+                labelMesajEroare.Text = " ";
+                labelMesajIMC.Text = " ";
+             
+                double verificare = ValidareDateIntroduse();
+                if (verificare == -1)
+                {
+                    labelMesajEroare.Text = "Date invalide. Introduceti cifre pozitive si mai mari ca 0";
+                    return;
+                }
+                labelMesajEroare.Text = " ";
+                MesajStarePonderala();
+            }
+            catch (FormatException ex)
+            {
+                labelMesajEroare.Text = $"Eroare necunoscută. Nu introduceti litere sau simboluri.";
+              
+                labelKgDiferenta.Text = " ";
+                labelMesajIMC.Text = " ";
+            }
+        }
+
+        private void buttonIesireAplicatie_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+    }
+}
+
